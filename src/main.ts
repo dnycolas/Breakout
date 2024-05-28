@@ -1,5 +1,10 @@
-import { Actor, CollisionType, Color, Engine, Font, Text ,vec } from "excalibur"
+import { Actor, CollisionType, Color, Engine, Font, FontUnit, Label, Sound, Loader ,vec, SoundEvents, NativeSoundEvent } from "excalibur"
 
+const sound = new Sound('./src/Balloon Pop 1.wav');
+const loader = new Loader([sound]);
+
+const somzim = new Sound("./src/somzin.wav")
+const carreg = new Loader([somzim])
 // 1 - Criar uma instancia de Engine, que representa o jogo 
 const game = new Engine({
 	width: 800,
@@ -11,7 +16,7 @@ const game = new Engine({
 const barra = new Actor({
 	x: 150,
 	y: game.drawHeight - 40,
-	width: 50,
+	width: 200,
 	height: 20,
 	color: Color.fromRGB(165,171,207)
 })
@@ -76,19 +81,36 @@ bolinha.on("postupdate", () => {
 // adiconando pontuacao
 let pontos = 0
 
-const textPontos = new Text({
-	text: "0",
-	font: new Font({ size: 30})
+
+// Label = text + actor
+const textPontos = new Label({
+	text: pontos.toString(),
+	font: new Font({
+		size:1.5,
+		color: Color.White,
+		strokeColor: Color.Black,
+		unit: FontUnit.Rem,
+	}),
+
+	pos: vec(700,550)
 })
 
-const objetoTexto = new Actor({
-	x: game.drawWidth - 80,
-	y: game.drawHeight - 15
-})
+game.add(textPontos)
 
-objetoTexto.graphics.use(textPontos)
+// isso aqui é para declarar um texto
+// const textPontos = new Text({
+// 	text: "0",
+// 	font: new Font({ size: 50})
+// })
 
-game.add(objetoTexto)
+// const objetoTexto = new Actor({
+// 	x: game.drawWidth - 80,
+// 	y: game.drawHeight - 15
+// })
+
+// objetoTexto.graphics.use(textPontos)
+
+// game.add(objetoTexto)
 
 
 
@@ -103,8 +125,25 @@ let colidindo: boolean = false
 bolinha.on("collisionstart", (event) => {
 	// verificar se a vbolinha colidiu com algum bloco destrutivel
 	if (listaBloco.includes(event.other)){
-
+		// isso aqui é para destruir o bloco
 		event.other.kill()
+
+		// Adicionado um ponto
+		pontos++
+
+		// Atualiza o valor do placar - textoPontos
+
+		textPontos.text = pontos.toString()
+
+		console.log(pontos);
+
+		sound.play(1)
+
+		if (pontos == 15) {
+			alert("muito bem T :)")
+		}
+
+
 	}
 	
 	// Rebater a bolinha e inverter as direcoes
@@ -166,7 +205,10 @@ for(let j = 0; j < linhas; j++){
 			})
 		)
 	}
+
 }
+
+
 
 listaBloco.forEach(bloco => {
 	// Define o tipo de colisor de cada bloco
@@ -182,6 +224,8 @@ bolinha.on("collisionend", () => {
 })
 
 bolinha.on("exitviewport", () => {
+	
+	somzim.play(5)
 	alert("mirreu")
 	window.location.reload()
 })
@@ -191,6 +235,9 @@ game.add(bolinha)
 
 // insere o actorbarra - player, no game 
 game.add(barra)
+
+await game.start(carreg)
+await game.start(loader)
 
 // Inicia o game
 game.start()
