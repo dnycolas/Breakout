@@ -1,10 +1,13 @@
 import { Actor, CollisionType, Color, Engine, Font, FontUnit, Label, Sound, Loader ,vec, SoundEvents, NativeSoundEvent } from "excalibur"
 
 const sound = new Sound('./src/Balloon Pop 1.wav');
-const loader = new Loader([sound]);
 
-const somzim = new Sound("./src/somzin.wav")
-const carreg = new Loader([somzim])
+const somzim = new Sound("./src/HINO DO VASCO (VERSÃO EXTENDIDA) - ESTOURADO (320).mp3")
+
+const somwin = new Sound("./src/soundWin.mp3")
+
+const loader = new Loader([sound, somzim, somwin]);
+
 // 1 - Criar uma instancia de Engine, que representa o jogo 
 const game = new Engine({
 	width: 800,
@@ -47,7 +50,16 @@ const bolinha = new Actor({
 bolinha.body.collisionType = CollisionType.Passive
 
 // 5 - Criar movimentacao da bolinha
-const velocidadeBolinha = vec(750, 750)
+
+// adiconando pontuacao
+
+let volume = 1000
+
+
+
+const velocidadeBolinha = vec(volume, volume)
+
+
 
 //  aqui define a velocidade que a bolinha vai ter 
 setTimeout(() => {
@@ -78,9 +90,13 @@ bolinha.on("postupdate", () => {
 	// } 
 })
 
+
+
+
+
+
 // adiconando pontuacao
 let pontos = 0
-
 
 // Label = text + actor
 const textPontos = new Label({
@@ -139,13 +155,23 @@ bolinha.on("collisionstart", (event) => {
 
 		sound.play(1)
 
+		
+
+		console.log(volume);
+		
+
+		if (pontos == 15) {
+
+		somwin.play(1)
+		}
+
 		if (pontos == 15) {
 			alert("muito bem T :)")
 		}
-
-
 	}
 	
+	
+
 	// Rebater a bolinha e inverter as direcoes
 	// esse cara vai pegar a area de contato 
 	let interseccao = event.contact.mtv.normalize()
@@ -225,7 +251,7 @@ bolinha.on("collisionend", () => {
 
 bolinha.on("exitviewport", () => {
 	
-	somzim.play(5)
+	somzim.play(1)
 	alert("mirreu")
 	window.location.reload()
 })
@@ -236,9 +262,9 @@ game.add(bolinha)
 // insere o actorbarra - player, no game 
 game.add(barra)
 
-await game.start(carreg)
+
 await game.start(loader)
 
 // Inicia o game
-game.start()
+
 
